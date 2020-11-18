@@ -5,7 +5,7 @@
             "previewLimit": 50,
             "driver": "SQLite",
             "name": "Level Up",
-            "database": "${workspaceFolder:levelup}/db.sqlite3"
+            "database": "${workspaceFolder:level-up-api}/db.sqlite3"
         }
     ],
     "python.pythonPath": "/Users/RyanBeiden/.local/share/virtualenvs/level-up-api-eNKDp2wS/bin/python"

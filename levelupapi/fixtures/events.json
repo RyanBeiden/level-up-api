@@ -1,0 +1,22 @@
+[
+    {
+        "model": "levelupapi.event",
+        "pk": 1,
+        "fields": {
+            "game": 1,
+            "organizer": 1,
+            "description": "Good games",
+            "datetime": "2020-11-04 06:00:00.000000-08:00"
+        }
+    },
+    {
+        "model": "levelupapi.event",
+        "pk": 2,
+        "fields": {
+            "game": 2,
+            "organizer": 1,
+            "description": "Better games",
+            "datetime": "2020-12-04 06:00:00.000000-08:00"
+        }
+    }
+]
