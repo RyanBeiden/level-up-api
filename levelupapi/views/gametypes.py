@@ -6,7 +6,7 @@ from rest_framework import serializers
 from levelupapi.models import GameType
 
 
-class GameTypes(ViewSet):
+class GameTypesViewSet(ViewSet):
     """Level up game types"""
 
     def retrieve(self, request, pk=None):
