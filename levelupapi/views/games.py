@@ -47,7 +47,7 @@ class GamesViewSet(ViewSet):
         # whose `id` is what the client passed as the
         # `gameTypeId` in the body of the request.
         gametype = GameType.objects.get(pk=request.data["gameTypeId"])
-        game.gametype = gametype
+        game.game_type = gametype
 
         try:
             game.save()
@@ -91,7 +91,7 @@ class GamesViewSet(ViewSet):
         game.gamer = gamer
 
         gametype = GameType.objects.get(pk=request.data["gameTypeId"])
-        game.gametype = gametype
+        game.game_type = gametype
         game.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
