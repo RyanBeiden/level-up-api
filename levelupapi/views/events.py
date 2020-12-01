@@ -97,9 +97,11 @@ class EventsViewSet(ViewSet):
         Returns:
             Response -- JSON serialized list of events
         """
+        # Get the current authenticated user
         gamer = Gamer.objects.get(user=request.auth.user)
         events = Event.objects.all()
 
+        # Set the `joined` property on every event
         for event in events:
             event.joined = None
 
