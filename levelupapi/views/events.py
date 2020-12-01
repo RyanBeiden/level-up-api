@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from levelupapi.models import Game, Event, Gamer
 from levelupapi.views.games import GameSerializer
+from levelupapi.models.gamer_event import GamerEvent
+
 
 
 class EventsViewSet(ViewSet):
@@ -95,16 +97,89 @@ class EventsViewSet(ViewSet):
         Returns:
             Response -- JSON serialized list of events
         """
+        gamer = Gamer.objects.get(user=request.auth.user)
         events = Event.objects.all()
+
+        for event in events:
+            event.joined = None
+
+            try:
+                GamerEvent.objects.get(event=event, gamer=gamer)
+                event.joined = True
+            except GamerEvent.DoesNotExist:
+                event.joined = False
 
         # Support filtering events by game
         game = self.request.query_params.get('gameId', None)
         if game is not None:
-            events = events.filter(game__id=game)
+            events = events.filter(game__id=type)
 
         serializer = EventSerializer(
             events, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @action(methods=['get', 'post', 'delete'], detail=True)
+    def signup(self, request, pk=None):
+        """Managing gamers signing up for events"""
+
+        # A gamer wants to sign up for an event
+        if request.method == "POST":
+            # The pk would be `2` if the URL above was requested
+            event = Event.objects.get(pk=pk)
+
+            # Django uses the `Authorization` header to determine
+            # which user is making the request to sign up
+            gamer = Gamer.objects.get(user=request.auth.user)
+
+            try:
+                # Determine if the user is already signed up
+                registration = GamerEvent.objects.get(
+                    event=event, gamer=gamer)
+                return Response(
+                    {'message': 'Gamer already signed up this event.'},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+            except GamerEvent.DoesNotExist:
+                # The user is not signed up.
+                registration = GamerEvent()
+                registration.event = event
+                registration.gamer = gamer
+                registration.save()
+
+                return Response({}, status=status.HTTP_201_CREATED)
+
+        # User wants to leave a previously joined event
+        elif request.method == "DELETE":
+            # Handle the case if the client specifies a game
+            # that doesn't exist
+            try:
+                event = Event.objects.get(pk=pk)
+            except Event.DoesNotExist:
+                return Response(
+                    {'message': 'Event does not exist.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Get the authenticated user
+            gamer = Gamer.objects.get(user=request.auth.user)
+
+            try:
+                # Try to delete the signup
+                registration = GamerEvent.objects.get(
+                    event=event, gamer=gamer)
+                registration.delete()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+            except GamerEvent.DoesNotExist:
+                return Response(
+                    {'message': 'Not currently registered for event.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+        # If the client performs a request with a method of
+        # anything other than POST or DELETE, tell client that
+        # the method is not supported
+        return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class EventUserSerializer(serializers.ModelSerializer):
@@ -133,7 +208,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'game', 'organizer',
-                'description', 'date', 'time')
+                'description', 'date', 'time', 'joined')
 
 class GameSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for games"""
