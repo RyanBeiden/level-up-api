@@ -9,8 +9,12 @@ class Event(models.Model):
     date = models.DateField(auto_now=False, auto_now_add=False, default=now)
     time = models.TimeField(auto_now=False, auto_now_add=False, default=now)
 
-    participants = models.ManyToManyField(
-        "Gamer",
-        related_name="participant_events",
-        related_query_name="participant_event"
-    )
+    def __str__(self) -> str: self.description
+
+    @property
+    def joined(self):
+        return self.__joined
+
+    @joined.setter
+    def joined(self, value):
+        self.__joined = value
