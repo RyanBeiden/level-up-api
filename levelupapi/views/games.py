@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from levelupapi.models import Game, GameType, Gamer
 
-class GameSerializer(serializers.HyperlinkedModelSerializer):
+class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for games
 
     Arguments:
@@ -17,12 +17,7 @@ class GameSerializer(serializers.HyperlinkedModelSerializer):
     """
     class Meta:
         model = Game
-        url = serializers.HyperlinkedIdentityField(
-            view_name='game',
-            lookup_field='id'
-        )
         fields = ('id', 'url', 'title', 'maker', 'number_of_players', 'skill_level', 'game_type')
-        depth = 1
 
 class GamesViewSet(ViewSet):
     """Level up games"""
