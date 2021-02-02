@@ -82,6 +82,8 @@ def usergame_list(request):
         # Get only the values from the dictionary and create a list from them
         list_of_users_with_games = games_by_user.values()
 
+        print(list_of_users_with_games)
+
         # Specify the Django template and provide data context
         template = 'users/list_with_games.html'
         context = {
