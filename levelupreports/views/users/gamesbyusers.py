@@ -15,20 +15,16 @@ def usergame_list(request):
             # Query for all games, with related user info.
             db_cursor.execute("""
                 SELECT
-                    g.id,
-                    g.title,
-                    g.maker,
-                    g.game_type_id,
-                    g.number_of_players,
-                    g.skill_level,
-                    u.id user_id,
-                    u.first_name || ' ' || u.last_name AS full_name
+                    id,
+                    title,
+                    maker,
+                    game_type_id,
+                    number_of_players,
+                    skill_level,
+                    user_id,
+                    full_name
                 FROM
-                    levelupapi_game g
-                JOIN
-                    levelupapi_gamer gr ON g.gamer_id = gr.id
-                JOIN
-                    auth_user u ON gr.user_id = u.id
+                    GAMES_BY_USER
             """)
 
             dataset = db_cursor.fetchall()
@@ -81,6 +77,8 @@ def usergame_list(request):
 
         # Get only the values from the dictionary and create a list from them
         list_of_users_with_games = games_by_user.values()
+
+        print(list_of_users_with_games)
 
         # Specify the Django template and provide data context
         template = 'users/list_with_games.html'
