@@ -10,11 +10,11 @@
 
     {% for user in event_attendees_list %}
       <h2>{{ user.full_name }}</h2>
-      <ol>
+      <ul>
         {% for event in user.events %}
-          <li>Title: {{ event.title }}</li>
+          <li>Game: {{ event.game_name }}</li>
         {% endfor %}
-      </ol>
+      </ul>
     {% endfor %}
   </body>
 </html

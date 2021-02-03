@@ -11,22 +11,14 @@ def event_attendees_list(request):
 
             db_cursor.execute("""
                 SELECT
-                    e.time,
-                    e.date,
-                    e.id as event_id,
-                    g.title as game_name,
-                    u.id as user_id,
-                    u.first_name || ' ' || u.last_name AS full_name
+                    time,
+                    date,
+                    event_id,
+                    game_name,
+                    user_id,
+                    full_name
                 FROM
-                    levelupapi_event e
-                JOIN
-                    levelupapi_gamerevent eg ON e.id = eg.event_id
-                JOIN
-                    levelupapi_gamer gr ON eg.gamer_id = gr.id
-                JOIN
-                    auth_user u ON gr.user_id = u.id
-                JOIN
-                    levelupapi_game g ON e.game_id = g.id
+                    EVENTS_BY_USER
             """)
 
             dataset = db_cursor.fetchall()
